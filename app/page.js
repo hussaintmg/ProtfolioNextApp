@@ -1,103 +1,103 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import SplitText from "./Components/SplitText";
+import Self from "./Components/Self";
+import RevealSection from "./Components/RevealSection";
+import Profone from "./Components/Prof_1";
+import Proftwo from "./Components/Prof_2";
+import Profthree from "./Components/Prof_3";
+import Proffour from "./Components/Prof_4";
+import FadeContent from "./Components/FadeContent";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    document.title = "Hussain's Portfolio | Home";
+    setWidth(window.innerWidth);
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  let content;
+  if (width >= 1200) {
+    content = <Profone />;
+  } else if (width >= 750) {
+    content = <Proftwo />;
+  } else if (width >= 250) {
+    content = <Profthree />;
+  } else {
+    content = <Proffour />;
+  }
+
+  const FO = [
+    { FOI: "Fiverr", FOL: "https://www.fiverr.com/s/Q7VlVY2" }
+  ];
+
+  return (
+    <div className="Home">
+      <div className="wel">
+        <SplitText
+          text="Welcome"
+          className="text-center"
+          delay={100}
+          duration={0.6}
+          ease="power3.out"
+          splitType="chars"
+          from={{ opacity: 0, y: 40 }}
+          to={{ opacity: 1, y: 0 }}
+          threshold={0.1}
+          rootMargin="-100px"
+        />
+      </div>
+      <RevealSection trigger="load">
+        <div className="float-right flex -mt-[4cm]">{content}</div>
+      </RevealSection>
+      <Self />
+
+      <RevealSection trigger="load">
+        <div className="mt-[5cm] flex justify-center">
+          <FadeContent
+            className="inline-block lg:text-[2rem] md:text-[1.5rem] sm:text-[1rem] text-[1rem]"
+            blur={true}
+            duration={1500}
+            easing="ease-out"
+            initialOpacity={0}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <h3 className="text-[#24ad4a] lg:text-[3rem] md:text-[2.3rem] sm:text-[1.5rem] text-[1.3rem] lg:mb-[0.5cm] mb-0 font-bold">Freelance On:</h3>
+            <ul className="lg:ml-[1.5cm] ml-[1cm] list-disc marker:text-white space-y-2">
+              {FO && FO.length > 0 ? (
+                FO.map((obj, index) => {
+                  return (
+                    <li key={index}>
+                      <a
+                        style={{ textDecoration: "none", color: "white" }}
+                        href={obj.FOL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {obj.FOI}
+                      </a>
+                    </li>
+                  );
+                })
+              ) : (
+                <p
+                  style={{
+                    color: "red",
+                    fontSize: "1.5rem",
+                    fontWeight: "700",
+                    textAlign: "center",
+                  }}
+                >
+                  No link Available
+                </p>
+              )}
+            </ul>
+          </FadeContent>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </RevealSection>
     </div>
   );
 }
