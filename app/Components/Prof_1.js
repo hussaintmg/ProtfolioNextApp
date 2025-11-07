@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useContext } from "react";
+import React from "react";
+import { useMainData } from "../context/MainDataContext";
 function Prof_1() {
-  const { Prof } = "https://portfolio-react-nine-rose.vercel.app/static/media/Hussain-removebg-preview.d31eeb4b018f270afcf9.png"
-  const apiUrl = process.env.REACT_APP_BACKEND_SERVER;
+  const { home } = useMainData();
   return (
     <svg
       width="340"
@@ -18,7 +18,7 @@ function Prof_1() {
         </clipPath>
       </defs>
       <image
-        href={`https://portfolio-react-nine-rose.vercel.app/static/media/Hussain-removebg-preview.d31eeb4b018f270afcf9.png`}
+        href={home?.home?.Profile}
         width="350"
         height="450"
         x="-10"

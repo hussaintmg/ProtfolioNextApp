@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* ---------- Root Theme ---------- */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -18,7 +19,9 @@
     --foreground: #ededed;
   }
 }
-*{
+
+/* ---------- Global Reset ---------- */
+* {
   box-sizing: border-box;
 }
 
@@ -28,7 +31,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-
+/* ---------- Gradient Welcome Text ---------- */
 .wel span {
   background: linear-gradient(150deg, white, grey 50%, white 75%);
   font-size: 60px;
@@ -39,6 +42,7 @@ body {
   color: transparent;
 }
 
+/* ---------- Responsive Adjustments ---------- */
 /* tablet & small laptop */
 @media (max-width: 940px) {
   .wel {
@@ -46,30 +50,31 @@ body {
     text-align: left;
   }
   .wel div {
-      text-align: left !important;
-    }
-
+    text-align: left !important;
+  }
   .wel div span {
     font-size: 40px;
   }
 }
 
+/* mobile */
 @media (max-width: 400px) {
   .wel span {
     font-size: 35px;
   }
 }
 
+/* very small screens */
 @media (max-width: 359px) {
-  .wel div{
+  .wel div {
     text-align: center;
     padding-left: 0;
   }
 }
 
-
+/* ---------- Shiny Text Animation ---------- */
 .shiny-text {
-  color: #b5b5b5a4; /* Adjust this color to change intensity/style */
+  color: #b5b5b5a4;
   background: linear-gradient(
     120deg,
     rgba(255, 255, 255, 0) 40%,
@@ -94,12 +99,30 @@ body {
 .shiny-text.disabled {
   animation: none;
 }
+
+/* ---------- SVG Profile Container ---------- */
 .prof-cont {
   display: flex;
   float: right;
   margin: -4cm 0 0 0;
-  svg {
-    width: 100%;
-    height: auto;
+}
+.prof-cont svg {
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- Custom Fade Animation (Tailwind Utility) ---------- */
+@layer utilities {
+  @keyframes fade {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+
+  .animate-fade {
+    animation: fade 3s ease-in-out infinite alternate;
   }
 }

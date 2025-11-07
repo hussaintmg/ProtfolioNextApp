@@ -3,11 +3,10 @@
 import React from "react";
 import Link from "next/link";
 
-export default function Topbar({ activePage, setOpenMenu, role }) {
-  const logo =
-    "https://portfolio-react-nine-rose.vercel.app/static/media/tmg-removebg-preview.e123cd361188562e6ffe.png";
-  const apiUrl = "";
+import { useMainData } from "../context/MainDataContext";
 
+export default function Topbar({ activePage, setOpenMenu, role }) {
+  const { home } = useMainData();
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Skills", path: "/skills" },
@@ -44,7 +43,7 @@ export default function Topbar({ activePage, setOpenMenu, role }) {
         className="w-[250px] h-[170px] -mt-[35px] bg-transparent border-none overflow-hidden max-[720px]:w-auto max-[720px]:h-1/3 max-[720px]:m-0 max-[720px]:flex max-[720px]:justify-center"
       >
         <img
-          src={`${apiUrl}${logo}`}
+          src={home?.home?.logo}
           alt="Logo"
           className="w-[250px] h-[250px] -mt-[20px] cursor-pointer max-[720px]:w-[170px] max-[720px]:h-[170px] max-[300px]:w-[130px] max-[300px]:h-[130px]"
         />
@@ -70,7 +69,9 @@ export default function Topbar({ activePage, setOpenMenu, role }) {
             key={item.name}
             href={getPath(item.name)}
             className={`text-[35px] max-[1000px]:text-[30px] no-underline bg-transparent cursor-pointer h-11 ${
-              activePage === item.name ? "text-gray-400" : "hover:text-gray-400"
+              activePage === item.name || activePage === `Admin${item.name}`
+                ? "text-gray-400"
+                : "hover:text-gray-400"
             }`}
           >
             {item.name}

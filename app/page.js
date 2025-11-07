@@ -9,16 +9,23 @@ import Proftwo from "./Components/Prof_2";
 import Profthree from "./Components/Prof_3";
 import Proffour from "./Components/Prof_4";
 import FadeContent from "./Components/FadeContent";
+import { useMainData } from "./context/MainDataContext";
 
 export default function Home() {
   const [width, setWidth] = useState(0);
+  const [FO, setFO] = useState(null);
+  const { home } = useMainData();
+  
   useEffect(() => {
     document.title = "Hussain's Portfolio | Home";
     setWidth(window.innerWidth);
     const handleResize = () => setWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
+    if (home) {
+      setFO(home?.home?.FO);
+    }
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [home]);
 
   let content;
   if (width >= 1200) {
@@ -31,15 +38,11 @@ export default function Home() {
     content = <Proffour />;
   }
 
-  const FO = [
-    { FOI: "Fiverr", FOL: "https://www.fiverr.com/s/Q7VlVY2" }
-  ];
-
   return (
     <div className="Home">
       <div className="wel">
         <SplitText
-          text="Welcome"
+          text={home?.home?.welText}
           className="text-center"
           delay={100}
           duration={0.6}
@@ -65,7 +68,9 @@ export default function Home() {
             easing="ease-out"
             initialOpacity={0}
           >
-            <h3 className="text-[#24ad4a] lg:text-[3rem] md:text-[2.3rem] sm:text-[1.5rem] text-[1.3rem] lg:mb-[0.5cm] mb-0 font-bold">Freelance On:</h3>
+            <h3 className="text-[#24ad4a] lg:text-[3rem] md:text-[2.3rem] sm:text-[1.5rem] text-[1.3rem] lg:mb-[0.5cm] mb-0 font-bold">
+              Freelance On:
+            </h3>
             <ul className="lg:ml-[1.5cm] ml-[1cm] list-disc marker:text-white space-y-2">
               {FO && FO.length > 0 ? (
                 FO.map((obj, index) => {

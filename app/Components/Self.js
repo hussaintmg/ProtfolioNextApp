@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useContext } from "react";
+import React from "react";
+
+import { useMainData } from "../context/MainDataContext";
+
 import ShinyText from "./ShinyText";
 
 function Self() {
-  const MSB = "I'm Hussain,";
-  const MS =
-    "a MERN Stack Web developer with a passion for building web applications. I specialize in developing efficient, scalable, and user-friendly solutions";
+  const { home } = useMainData();
+  const MSB = home?.home?.MSB;
+  const MS = home?.home?.MS;
   return (
     <ShinyText
       text={

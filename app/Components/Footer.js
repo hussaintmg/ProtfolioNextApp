@@ -1,11 +1,16 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+
+import { useMainData } from "../context/MainDataContext";
+
 import RevealSection from "./RevealSection";
 
 function Footer() {
   const holdTimers = useRef({});
   const [copied, setCopied] = useState(false);
+
+  const { home } = useMainData();
 
   const showPopup = () => {
     setCopied(true);
@@ -26,37 +31,29 @@ function Footer() {
 
   const contacts = [
     {
-      text: "hussaintmerng@gmail.com",
-      img: "/favicon.ico",
+      text: home?.home?.EmailT,
+      img: home?.home?.EmailIcon,
       shape: "rounded-full",
       colour: "bg-white",
       copyable: true,
     },
     {
-      text: "PhoneNumber",
-      img: "/favicon.ico",
+      text: home?.home?.PhoneN,
+      img: home?.home?.PhoneI,
       shape: "rounded-full",
       colour: "bg-white",
       copyable: true,
     },
     {
-      text: "AddressT",
-      img: "/favicon.ico",
+      text: home?.home?.AddressT,
+      img: home?.home?.AddressI,
       shape: "rounded-full",
       colour: "bg-white",
       copyable: false,
     },
   ];
 
-  const socials = [
-    {
-      title: "Facebook",
-      icon: "/favicon.ico",
-      link: "https://facebook.com",
-      shape: "rounded-full",
-      colour: "bg-blue-500",
-    },
-  ];
+  const socials = home?.home?.socials || [];
 
   return (
     <RevealSection trigger="scroll">
@@ -69,7 +66,7 @@ function Footer() {
         {/* Logo */}
         <div className="ml-[3.54375vw] w-[13.75vw] h-[13.75vw]">
           <img
-            src="https://portfolio-react-nine-rose.vercel.app/static/media/tmg-removebg-preview.e123cd361188562e6ffe.png"
+            src={home?.home?.logo}
             alt="logo"
             className="w-full h-full object-contain"
           />
@@ -134,7 +131,7 @@ function Footer() {
                   className="flex items-center gap-3 ml-[2%] mt-[2%] text-white hover:text-gray-300"
                 >
                   <div
-                    className={`w-[1.875vw] h-[1.875vw] max-[700px]:w-[3vw] max-[700px]:h-[3vw] flex justify-center items-center ${social.colour} ${social.shape}`}
+                    className={`w-[1.875vw] h-[1.875vw] max-[700px]:w-[3vw] max-[700px]:h-[3vw] flex justify-center items-center bg-[${social.colour}] bg-${social.colour} ${social.shape==="circle"?"rounded-[50%]":""} ${social.shape==="square"?"rounded-[7px]":""} overflow-hidden`}
                   >
                     <img
                       src={social.icon}

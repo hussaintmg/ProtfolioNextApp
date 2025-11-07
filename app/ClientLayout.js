@@ -1,34 +1,167 @@
 "use client";
-
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { toast } from "react-toastify";
 
 import Topbar from "./Components/Topbar";
 import Sidebar from "./Components/Sidebar";
-import Footer from './Components/Footer'
+import Footer from "./Components/Footer";
+import Background from "./Components/Particles";
+import AnimatedLayout from "./Components/AnimatedLayout";
+import { useMainData } from "./context/MainDataContext";
+import { useAuth } from "./context/AuthContext";
+import axios from "axios";
 
 export default function ClientLayout({ children }) {
   const [openMenu, setOpenMenu] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isCloseLogin, setIsCloseLogin] = useState(false);
+  const [isCloseAdmin, setIsCloseAdmin] = useState(false);
+  const [isCloseAuthenticate, setIsCloseAuthenticate] = useState(false);
 
+  const { load } = useMainData();
+  const { user } = useAuth();
   const pathname = usePathname();
 
-  const isAdmin = pathname.startsWith("/admin");
-  const role = isAdmin ? "admin" : "user";
+  const isAdminRoute = pathname.startsWith("/admin");
+  const role = isAdminRoute ? "admin" : "user";
 
-  let activePage = "Home"; // default
-  if (pathname.includes("skills")) activePage = "Skills";
-  else if (pathname.includes("projects")) activePage = "Projects";
-  else if (pathname === "/admin") activePage = "AdminMain";
-  else if (pathname === "/admin/home") activePage = "Home";
-  else if (pathname === "/admin/skills") activePage = "Skills";
-  else if (pathname === "/admin/projects") activePage = "Projects";
+  const activePage = useMemo(() => {
+    const cleanPath = pathname.replace(/^\/|\/$/g, "");
+    const parts = cleanPath.split("/");
+    const isAdmin = parts[0] === "admin";
+
+    if (isAdmin) {
+      if (parts.length === 1) return "AdminMain";
+      const subPage = parts[1];
+      const map = { home: "Home", skills: "Skills", projects: "Projects" };
+      return map[subPage] ? `Admin${map[subPage]}` : "AdminMain";
+    } else {
+      const map = {
+        "": "Home",
+        home: "Home",
+        skills: "Skills",
+        projects: "Projects",
+      };
+      return map[parts[0]] || "Home";
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const showLoginBar = pathname === "/" && (!user?.user?.role || isCloseLogin);
+
+  const sendAuthLink = async () => {
+    try {
+      await axios.get("/api/auth/send-auth-link", {
+        withCredentials: true,
+      });
+      toast.success("Link Send To Your Mail");
+    } catch (err) {
+      console.error("Send auth link error:", err);
+      toast.error("Failed to Send Link");
+    }
+  };
+
+  if (!load) return <AnimatedLayout visible={!load} />;
 
   return (
     <>
+      <Background />
+
+      {showLoginBar && (
+        <div className="w-full flex justify-between items-center px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-bold z-[50000] sticky top-0 left-0">
+          <span>Do you want to Login / Register?</span>
+          <span className="flex items-center gap-[0.3cm]">
+            <Link
+              href="/login"
+              className="text-white bg-green-600 px-3 py-1 rounded"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="text-white bg-green-600 px-3 py-1 rounded"
+            >
+              Register
+            </Link>
+            <button
+              type="button"
+              onClick={() => setIsCloseLogin(true)}
+              className="w-[30px] bg-transparent text-white text-2xl font-bold border-none cursor-pointer"
+            >
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+          </span>
+        </div>
+      )}
+      {user?.user?.role === "admin" &&
+        !user?.user?.authenticated &&
+        !isCloseAuthenticate &&
+        pathname === "/" && (
+          <div className="w-full flex justify-between items-center px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-semibold z-[2] sticky top-0 left-0">
+            <span>Verify Your Email</span>
+            <span className="flex items-center gap-[0.3cm]">
+              <button
+                onClick={sendAuthLink}
+                className="text-white cursor-pointer bg-green-600 px-3 py-1 rounded"
+              >
+                Send Link
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsCloseAuthenticate(true)}
+                className="w-[30px] bg-transparent text-white text-2xl font-bold border-none cursor-pointer"
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </span>
+          </div>
+        )}
+
+      {user?.user?.role === "admin" &&
+        user?.user?.authenticated &&
+        !isCloseAdmin &&
+        pathname === "/" && (
+          <div className="w-full flex justify-between items-center px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-semibold z-[50000] sticky top-0 left-0">
+            <span>
+              Hey Admin! Want to go to the Admin Page?
+              {user?.user?.authenticated}
+            </span>
+            <span className="flex items-center gap-[0.3cm]">
+              <Link
+                href="/admin"
+                className="text-white bg-green-600 px-3 py-1 rounded"
+              >
+                Admin Page
+              </Link>
+              <button
+                type="button"
+                onClick={() => setIsCloseAdmin(true)}
+                className="w-[30px] bg-transparent text-white text-2xl font-bold border-none cursor-pointer"
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </span>
+          </div>
+        )}
+
       <Topbar role={role} activePage={activePage} setOpenMenu={setOpenMenu} />
-      <Sidebar role={role} activePage={activePage} openMenu={openMenu} setOpenMenu={setOpenMenu}/>
+
+      <Sidebar
+        role={role}
+        activePage={activePage}
+        openMenu={openMenu}
+        setOpenMenu={setOpenMenu}
+      />
+
       <main>{children}</main>
-      <Footer/>
+      <Footer />
     </>
   );
 }

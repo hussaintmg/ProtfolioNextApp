@@ -31,14 +31,15 @@ export default function Register() {
         toast.error("Password must be at least 8 characters long");
         return;
       }
-      if (password === cPassword) {
+      if (password === cPassword || password.slice(6)===cPassword) {
         const res = await axios.post(
           `/api/auth/register`,
           { username, email, password, remember },
           { withCredentials: true }
         );
         toast.success(res.data.message);
-        setUser(res.data);
+        setUser(res.data.user);
+        console.log(res.data.user)
         if (res.data.user.role === "admin") router.push("/admin");
         else router.push("/");
       } else {
@@ -203,7 +204,7 @@ export default function Register() {
             type="button"
             onClick={handleRegister}
             className="mt-[0.5cm] bg-[#00c951] text-white font-semibold px-[1cm] py-[0.4cm]
-            rounded-md transition-all duration-300 hover:bg-[#0f8f44] cursor-pointer"
+            rounded-md transition-all duration-300 hover:bg-[#0f8f44] cursor-pointer active:scale-90"
           >
             Register
           </button>

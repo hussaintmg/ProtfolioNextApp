@@ -25,6 +25,7 @@ export default function Login() {
         { withCredentials: true }
       );
       toast.success(res.data.message);
+      console.log(res.data.user)
       router.push(res.data.user.role === "admin" ? "/admin" : "/");
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
@@ -125,6 +126,7 @@ export default function Login() {
           {/* Login Button */}
           <button
             type="submit"
+            onClick={handleLogin}
             className="cursor-pointer w-[3cm] h-[1cm] bg-[#0f8f44] rounded-md text-white text-[1.3rem] font-bold transition-transform duration-300 hover:scale-110 active:scale-90 mt-[1.5cm]"
           >
             Login

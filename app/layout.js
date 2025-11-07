@@ -1,9 +1,11 @@
+// app/layout.js
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Background from "./Components/Particles";
 import ClientLayout from "./ClientLayout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthProvider } from "./context/AuthContext";
+import { MainDataProvider } from "./context/MainDataContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,45 +26,30 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Background />
-
-        <ClientLayout>{children}</ClientLayout>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          pauseOnHover
-          theme="dark"
-        />
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <AuthProvider>
+          <MainDataProvider>
+            <ClientLayout>{children}</ClientLayout>
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              pauseOnHover
+              theme="dark"
+            />
+          </MainDataProvider>
+        </AuthProvider>
       </body>
     </html>
   );

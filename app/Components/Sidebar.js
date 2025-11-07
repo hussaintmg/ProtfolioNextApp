@@ -71,7 +71,11 @@ export default function SideBar({ role, openMenu, setOpenMenu, activePage }) {
             stroke="currentColor"
             className="w-6 h-6"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
 
@@ -103,7 +107,7 @@ export default function SideBar({ role, openMenu, setOpenMenu, activePage }) {
               href={getPath(item.name)}
               onClick={() => setOpenMenu(false)}
               className={`w-full text-left py-2.5 px-4 rounded-xl font-medium text-lg tracking-wide transition-all duration-300 ${
-                activePage === item.name
+                activePage === item.name || activePage === `Admin${item.name}`
                   ? "bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-lg shadow-cyan-500/30"
                   : "text-gray-300 hover:bg-gray-700/50 hover:text-white"
               }`}

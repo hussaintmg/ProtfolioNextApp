@@ -4,21 +4,11 @@ import React, { useState, useEffect } from "react";
 import AnimatedTitle from "../Components/AnimatedTitle";
 import RevealSection from "../Components/RevealSection";
 
+import { useMainData } from "../context/MainDataContext";
+
 export default function Projects() {
-  const website_details = [
-    {
-      title: "Task Manager",
-      link: "http://www.google.com",
-      images: ["/123.avif", "/123.avif"],
-      videos: ["/up mis.mp4"],
-    },
-    {
-      title: "Chat Box",
-      link: "http://www.google.com",
-      images: ["/123.avif", "/123.avif"],
-      videos: ["/up mis.mp4"],
-    },
-  ];
+  const { projects } = useMainData();
+  const website_details = projects?.projects?.projectsArr || [];
 
   return (
     <div className="text-white">
@@ -82,9 +72,7 @@ function ProjectBlock({ index, web, reverse, website_details }) {
   };
 
   return (
-    <div
-      className={`w-[95%] mb-[4rem] block`}
-    >
+    <div className={`w-[95%] mb-[4rem] block`}>
       <div
         className={`flex items-center w-full ${
           reverse ? "flex-row-reverse" : ""
