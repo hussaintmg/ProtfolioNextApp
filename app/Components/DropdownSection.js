@@ -51,7 +51,7 @@ export default function DropdownSection({ project }) {
             <LinkEdit link={project.link} id={project._id} />
           </div>
           <div className="mb-[1.5rem]">
-            <ImagesEdit images={project.images} id={project._id} />
+            <ImagesEdit images={project.images} id={project._id}/>
           </div>
           <div className="mb-[1.5rem]">
             <VideosEdit videos={project.videos} id={project._id} />

@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Skills from "@/models/Skills";
-import fs from "fs";
-import path from "path";
+import { uploadFile } from "@/lib/cloudinary";
+
+export const dynamic = "force-dynamic";
 
 export async function PUT(req, { params }) {
   await connectDB();
-  const { index } = params;
 
   try {
+    const index = parseInt(params.index);
     const formData = await req.formData();
     const file = formData.get("icon");
 
@@ -21,35 +22,23 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "No Skills document found" }, { status: 404 });
     }
 
-    const currentIconPath = skills.skIcons[index];
-    if (!currentIconPath) {
+    const currentIcon = skills.skIcons[index];
+    if (!currentIcon) {
       return NextResponse.json({ error: "Invalid icon index" }, { status: 400 });
     }
 
-    const oldPath = path.join(process.cwd(), "public", currentIconPath);
-    if (fs.existsSync(oldPath)) {
-      fs.unlinkSync(oldPath);
-    }
-
     const buffer = Buffer.from(await file.arrayBuffer());
-    const newFileName = Date.now() + "-" + file.name;
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "images");
+    const result = await uploadFile(buffer, "skills", currentIcon.public_id);
 
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    skills.skIcons[index] = {
+      url: result.url,
+      public_id: result.publicId,
+    };
 
-    const newPath = path.join(uploadDir, newFileName);
-    fs.writeFileSync(newPath, buffer);
-
-    const relativePath = `/uploads/images/${newFileName}`;
-
-    skills.skIcons[index] = relativePath;
     await skills.save();
 
     return NextResponse.json({
       message: "Icon updated successfully",
-      newPath: relativePath,
       skills,
     });
   } catch (error) {

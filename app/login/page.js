@@ -7,9 +7,12 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const router = useRouter();
+
+  const { getUserData } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(true);
@@ -25,7 +28,7 @@ export default function Login() {
         { withCredentials: true }
       );
       toast.success(res.data.message);
-      console.log(res.data.user)
+      getUserData()
       router.push(res.data.user.role === "admin" ? "/admin" : "/");
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");

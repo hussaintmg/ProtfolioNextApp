@@ -181,7 +181,7 @@ export default function ImagesEdit({ images, id }) {
                         />
                       ) : (
                         <img
-                          src={img}
+                          src={img.icon}
                           alt="Current Image"
                           className="w-full h-full object-contain"
                         />

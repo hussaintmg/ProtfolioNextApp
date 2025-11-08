@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Projects from "@/models/Projects";
-import fs from "fs";
-import path from "path";
+import { uploadFile } from "@/lib/cloudinary";
 
 export const dynamic = "force-dynamic";
 
@@ -14,44 +13,74 @@ export async function POST(req) {
     const title = formData.get("title");
     const link = formData.get("link");
 
-    if (!title) return NextResponse.json({ message: "Title is required" }, { status: 400 });
-    if (!link) return NextResponse.json({ message: "Link is required" }, { status: 400 });
-
-    const imgDir = path.join(process.cwd(), "public", "uploads", "images");
-    const vidDir = path.join(process.cwd(), "public", "uploads", "videos");
-    if (!fs.existsSync(imgDir)) fs.mkdirSync(imgDir, { recursive: true });
-    if (!fs.existsSync(vidDir)) fs.mkdirSync(vidDir, { recursive: true });
+    if (!title)
+      return NextResponse.json(
+        { message: "Title is required" },
+        { status: 400 }
+      );
+    if (!link)
+      return NextResponse.json(
+        { message: "Link is required" },
+        { status: 400 }
+      );
 
     const images = [];
     const videos = [];
 
     for (const [key, value] of formData.entries()) {
-      if (key === "images[]" && value instanceof File) {
+      if (value instanceof File) {
         const buffer = Buffer.from(await value.arrayBuffer());
-        const filePath = path.join(imgDir, value.name);
-        fs.writeFileSync(filePath, buffer);
-        images.push(`/uploads/images/${value.name}`);
-      }
-      if (key === "videos[]" && value instanceof File) {
-        const buffer = Buffer.from(await value.arrayBuffer());
-        const filePath = path.join(vidDir, value.name);
-        fs.writeFileSync(filePath, buffer);
-        videos.push(`/uploads/videos/${value.name}`);
+
+        if (key === "images[]") {
+          const result = await uploadFile(
+            buffer,
+            "projects/images",
+            null,
+            "image"
+          );
+          images.push({
+            icon: result.url,
+            public_id: result.publicId,
+          });
+        }
+
+        if (key === "videos[]") {
+          const result = await uploadFile(
+            buffer,
+            "projects/videos",
+            null,
+            "video"
+          );
+          videos.push({
+            video: result.url,
+            public_id: result.publicId,
+          });
+        }
       }
     }
 
-    const existing = await Projects.findOne();
     const newProject = { title, link, images, videos };
+    let projectDoc = await Projects.findOne();
 
-    if (existing) {
-      existing.projectsArr.push(newProject);
-      await existing.save();
-      return NextResponse.json({ message: "Project added successfully", project: newProject }, { status: 201 });
+    if (projectDoc) {
+      projectDoc.projectsArr.push(newProject);
+      await projectDoc.save();
     } else {
-      const created = new Projects({ projectsArr: [newProject] });
-      await created.save();
-      return NextResponse.json({ message: "Project uploaded successfully", project: newProject }, { status: 201 });
+      projectDoc = await Projects.create({ projectsArr: [newProject] });
     }
+
+    // Assign the projectId to each media item after the document is saved
+    const lastProject =
+      projectDoc.projectsArr[projectDoc.projectsArr.length - 1];
+    lastProject.images.forEach((img) => (img.iconProjectId = lastProject._id));
+    lastProject.videos.forEach((vid) => (vid.videoProjectId = lastProject._id));
+
+    await projectDoc.save();
+
+    return NextResponse.json(
+      { message: "Project added successfully", project: lastProject },
+      { status: 201 }
+    );
   } catch (err) {
     console.error("Upload error:", err);
     return NextResponse.json({ message: "Server error" }, { status: 500 });

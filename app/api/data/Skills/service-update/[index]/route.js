@@ -2,12 +2,11 @@ import connectDB from "@/lib/mongodb";
 import Skills from "@/models/Skills";
 import { NextResponse } from "next/server";
 
-export async function PUT(req, context) {
+export async function PUT(req, {params}) {
   await connectDB();
 
   try {
-    const params = await context.params;
-    const indexParam = params?.index;
+    const indexParam = parseInt(params.index);
 
     if (indexParam === undefined) {
       return NextResponse.json(

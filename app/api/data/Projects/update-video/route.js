@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Projects from "@/models/Projects";
-import fs from "fs";
-import path from "path";
 import mongoose from "mongoose";
+import { uploadFile } from "@/lib/cloudinary";
 
 export const dynamic = "force-dynamic";
 
@@ -13,19 +12,19 @@ export async function POST(req) {
   try {
     const formData = await req.formData();
     const projectId = formData.get("projectId");
-    const index = formData.get("index");
+    const index = parseInt(formData.get("index"));
     const video = formData.get("video");
 
-    if (!projectId || index === undefined) {
+    if (!projectId || isNaN(index)) {
       return NextResponse.json(
         { success: false, message: "Project ID and index are required" },
         { status: 400 }
       );
     }
 
-    if (!(video instanceof File)) {
+    if (!(video instanceof File) || video.size === 0) {
       return NextResponse.json(
-        { success: false, message: "No video file provided" },
+        { success: false, message: "No valid video file provided" },
         { status: 400 }
       );
     }
@@ -36,7 +35,7 @@ export async function POST(req) {
 
     if (!parentDoc) {
       return NextResponse.json(
-        { success: false, message: "Project not found in projectsArr" },
+        { success: false, message: "Project not found" },
         { status: 404 }
       );
     }
@@ -47,33 +46,35 @@ export async function POST(req) {
 
     if (projectIndex === -1) {
       return NextResponse.json(
-        { success: false, message: "Project not found" },
+        { success: false, message: "Project not found in array" },
         { status: 404 }
       );
     }
 
-    const vidDir = path.join(process.cwd(), "public", "uploads", "videos");
-    if (!fs.existsSync(vidDir)) fs.mkdirSync(vidDir, { recursive: true });
+    const project = parentDoc.projectsArr[projectIndex];
+    const oldVideoObj = project.videos[index];
 
-    const oldVidPath = parentDoc.projectsArr[projectIndex].videos[index];
-    if (oldVidPath) {
-      const oldFullPath = path.join(process.cwd(), "public", oldVidPath);
-      if (fs.existsSync(oldFullPath)) fs.unlinkSync(oldFullPath);
-    }
-
+    // Upload the new video
     const buffer = Buffer.from(await video.arrayBuffer());
-    const uniqueName = `${Date.now()}-${video.name}`;
-    const newPath = path.join(vidDir, uniqueName);
-    fs.writeFileSync(newPath, buffer);
-    const publicPath = `/uploads/videos/${uniqueName}`;
+    const result = await uploadFile(
+      buffer,
+      "projects/videos",
+      oldVideoObj?.public_id || null,
+      "video"
+    );
 
-    parentDoc.projectsArr[projectIndex].videos[index] = publicPath;
+    // Update the video at the same index
+    project.videos[index] = {
+      video: result.url,
+      public_id: result.publicId,
+    };
+
     await parentDoc.save();
 
     return NextResponse.json({
       success: true,
-      message: "Video updated successfully",
-      video: publicPath,
+      message: "Video updated successfully on Cloudinary",
+      video: project.videos[index],
     });
   } catch (err) {
     console.error("Update video error:", err);

@@ -45,7 +45,6 @@ export default function Projects() {
 }
 
 function ProjectBlock({ index, web, reverse, website_details }) {
-  const apiUrl = process.env.REACT_APP_BACKEND_SERVER || "";
   const [currentImage, setCurrentImage] = useState(0);
   const [slideClass, setSlideClass] = useState("active");
   const [currentVideo, setCurrentVideo] = useState(0);
@@ -88,7 +87,7 @@ function ProjectBlock({ index, web, reverse, website_details }) {
         {/* Image */}
         <div className="flex-1 flex justify-center overflow-hidden max-w-[80%] w-[80%] h-auto rounded-[12px] shadow-[0_4px_15px_rgba(0,255,255,0.2)] max-[1000px]:w-[85%] max-[850px]:w-[90%]">
           <img
-            src={apiUrl + web.images[currentImage]}
+            src={web.images[currentImage].icon}
             alt={`${web.title} img`}
             className={`w-full max-w-[600px] h-auto object-contain overflow-hidden rounded-[12px] transition-transform duration-[600ms] ease-in-out ${
               slideClass === "active"
@@ -107,7 +106,7 @@ function ProjectBlock({ index, web, reverse, website_details }) {
         <video
           id={`video-${index}`}
           key={currentVideo}
-          src={apiUrl + web.videos[currentVideo]}
+          src={web.videos[currentVideo].video}
           autoPlay
           muted
           onEnded={handleVideoEnd}

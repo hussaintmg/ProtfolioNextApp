@@ -13,7 +13,7 @@ export default function AdminHome() {
   }, []);
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center text-white bg-black">
+    <div className="w-full min-h-screen flex flex-col items-center text-white">
       <h1 className="text-[6vw] text-[#00c951] font-extrabold mt-6">
         <AnimatedTitle>Home Edit</AnimatedTitle>
       </h1>

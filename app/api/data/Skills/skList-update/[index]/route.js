@@ -4,9 +4,9 @@ import Skills from "@/models/Skills";
 
 export async function PUT(req, { params }) {
   await connectDB();
-  const index = parseInt(params.index);
 
   try {
+    const index = parseInt(params.index);
     const { heading, list } = await req.json();
     const skill = await Skills.findOne();
 

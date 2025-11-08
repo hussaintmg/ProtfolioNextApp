@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Home from "@/models/Home";
-import fs from "fs";
-import path from "path";
+import { uploadFile, cloudinary } from "@/lib/cloudinary";
 
 export async function PUT(req, { params }) {
   await connectDB();
@@ -34,28 +33,23 @@ export async function PUT(req, { params }) {
     if (colour) social.colour = colour;
     if (shape) social.shape = shape;
 
-    // Handle file upload if new icon provided
+    // Handle file upload via Cloudinary
     if (file && typeof file === "object") {
       const buffer = Buffer.from(await file.arrayBuffer());
-      const uploadDir = path.join(process.cwd(), "public/uploads/images");
-      if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-      const filename = `${Date.now()}-${file.name}`;
-      const filePath = `/uploads/images/${filename}`;
-      const fullPath = path.join(uploadDir, filename);
-
-      // delete old icon file if exists
-      const oldPath = social.icon ? path.join(process.cwd(), "public", social.icon) : null;
-      if (oldPath && fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-
-      fs.writeFileSync(fullPath, buffer);
-      social.icon = filePath;
+      // upload new icon
+      const { url, publicId } = await uploadFile(buffer, "socials",social.iconPublicId);
+      social.icon = url;
+      social.iconPublicId = publicId;
     }
 
     home.socials[index] = social;
     await home.save();
 
-    return NextResponse.json({ message: "Social updated", socials: home.socials }, { status: 200 });
+    return NextResponse.json(
+      { message: "Social updated", socials: home.socials },
+      { status: 200 }
+    );
   } catch (err) {
     console.error("Update error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });

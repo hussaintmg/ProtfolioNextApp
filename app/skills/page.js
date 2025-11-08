@@ -90,11 +90,10 @@ export default function Skills() {
   }, []);
 
   const [positions, setPositions] = useState(() =>
-    generatePositions(icons.length)
+    generatePositions(icons?.length)
   );
   const [prevPositions, setPrevPositions] = useState(positions);
 
-  // reposition icons every 5s
   useEffect(() => {
     const newPos = generatePositions(icons.length);
     setPositions(newPos);
@@ -136,7 +135,7 @@ export default function Skills() {
           return (
             <motion.img
               key={i}
-              src={icon}
+              src={icon.url}
               alt={`tech-icon-${i}`}
               className="absolute opacity-90 lg:w-[5vw] sm:w-[4vw] md:w-[6vw] max-[700px]:w-[20px]"
               initial={{

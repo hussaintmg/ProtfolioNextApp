@@ -163,7 +163,7 @@ export default function VideosEdit({ videos = [], id }) {
                         className="w-[120px] h-[80px] border border-gray-300 rounded-lg overflow-hidden bg-gray-100 cursor-pointer transition duration-200 hover:scale-[1.05] flex items-center justify-center"
                       >
                         <video
-                          src={editVid[i] || vid}
+                          src={editVid[i] || vid.video }
                           className="w-full h-full object-cover"
                           controls
                         />

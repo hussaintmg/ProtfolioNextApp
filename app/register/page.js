@@ -7,9 +7,12 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
 
 export default function Register() {
   const router = useRouter();
+
+  const { getUserData } = useAuth();
 
   const [user, setUser] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +34,7 @@ export default function Register() {
         toast.error("Password must be at least 8 characters long");
         return;
       }
-      if (password === cPassword || password.slice(6)===cPassword) {
+      if (password === cPassword || password.slice(6) === cPassword) {
         const res = await axios.post(
           `/api/auth/register`,
           { username, email, password, remember },
@@ -39,7 +42,7 @@ export default function Register() {
         );
         toast.success(res.data.message);
         setUser(res.data.user);
-        console.log(res.data.user)
+        getUserData();
         if (res.data.user.role === "admin") router.push("/admin");
         else router.push("/");
       } else {

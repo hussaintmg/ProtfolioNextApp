@@ -1,8 +1,9 @@
 import connectDB from "@/lib/mongodb";
 import Skills from "@/models/Skills";
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { uploadFile } from "@/lib/cloudinary";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req) {
   await connectDB();
@@ -13,26 +14,23 @@ export async function POST(req) {
     if (!file || !file.name) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
-    // convert file to buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
 
-    // create unique file name
-    const uniqueName = `${Date.now()}-${file.name}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "images");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    const filePath = path.join(uploadDir, uniqueName);
-    fs.writeFileSync(filePath, buffer);
-    const iconPath = `/uploads/images/${uniqueName}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const result = await uploadFile(buffer, "skills");
+
+    const newIcon = {
+      url: result.url,        // fixed from result.secure_url
+      public_id: result.publicId, // fixed from result.public_id
+    };
+
     let skillsDoc = await Skills.findOne();
     if (!skillsDoc) {
-      skillsDoc = await Skills.create({ skIcons: [iconPath] });
+      skillsDoc = await Skills.create({ skIcons: [newIcon] });
     } else {
-      skillsDoc.skIcons.push(iconPath);
+      skillsDoc.skIcons.push(newIcon);
       await skillsDoc.save();
     }
+
     return NextResponse.json({
       message: "Icon uploaded successfully",
       skills: skillsDoc,

@@ -21,7 +21,7 @@ export default function ClientLayout({ children }) {
   const [isCloseAuthenticate, setIsCloseAuthenticate] = useState(false);
 
   const { load } = useMainData();
-  const { user } = useAuth();
+  const { user, getUserData, setUser } = useAuth();
   const pathname = usePathname();
 
   const isAdminRoute = pathname.startsWith("/admin");
@@ -54,7 +54,7 @@ export default function ClientLayout({ children }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const showLoginBar = pathname === "/" && (!user?.user?.role || isCloseLogin);
+  const showLoginBar = pathname === "/" && !user?.user?.role && !isCloseLogin;
 
   const sendAuthLink = async () => {
     try {
@@ -67,6 +67,11 @@ export default function ClientLayout({ children }) {
       toast.error("Failed to Send Link");
     }
   };
+  const handleLogout = () => {
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    setUser(null);
+    toast.success("Logged out successfully");
+  };
 
   if (!load) return <AnimatedLayout visible={!load} />;
 
@@ -75,7 +80,7 @@ export default function ClientLayout({ children }) {
       <Background />
 
       {showLoginBar && (
-        <div className="w-full flex justify-between items-center px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-bold z-[50000] sticky top-0 left-0">
+        <div className="w-full flex justify-between items-center px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-bold z-[2] sticky top-0 left-0">
           <span>Do you want to Login / Register?</span>
           <span className="flex items-center gap-[0.3cm]">
             <Link
@@ -128,7 +133,7 @@ export default function ClientLayout({ children }) {
         user?.user?.authenticated &&
         !isCloseAdmin &&
         pathname === "/" && (
-          <div className="w-full flex justify-between items-center px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-semibold z-[50000] sticky top-0 left-0">
+          <div className="w-full flex justify-between items-center px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-semibold z-[2] sticky top-0 left-0">
             <span>
               Hey Admin! Want to go to the Admin Page?
               {user?.user?.authenticated}
@@ -162,6 +167,16 @@ export default function ClientLayout({ children }) {
 
       <main>{children}</main>
       <Footer />
+      {user?.user?.role && pathname === "/" && (
+        <div className="w-full flex justify-end px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-semibold z-[50000] sticky top-0 left-0">
+          <button
+            onClick={handleLogout}
+            className=" cursor-pointer text-white bg-red-600 px-3 py-1 rounded"
+          >
+            Logout
+          </button>
+        </div>
+      )}
     </>
   );
 }

@@ -34,10 +34,10 @@ export default function SkillsIcons() {
     }
   };
 
-  const deleteIcon = async (iconPath) => {
+  const deleteIcon = async (index) => {
     try {
       await axios.delete(`/api/data/Skills/icon-delete`, {
-        data: { iconPath },
+        data: { index },
       });
       getData();
       toast.success("Icon deleted successfully!");
@@ -120,7 +120,7 @@ export default function SkillsIcons() {
                             className="cursor-pointer border border-gray-400 bg-white rounded-md p-2 hover:bg-gray-100 transition-all"
                           >
                             <img
-                              src={editPreview || icon}
+                              src={editPreview || icon.url}
                               alt="Preview"
                               width="70"
                               height="70"
@@ -147,7 +147,11 @@ export default function SkillsIcons() {
                   ) : (
                     <>
                       <td className="border border-black p-2 flex justify-center items-center">
-                        <img src={icon} alt="Skill Icon" className="w-[15%]" />
+                        <img
+                          src={icon.url}
+                          alt="Skill Icon"
+                          className="w-[15%]"
+                        />
                       </td>
                       <td className="border border-black p-2">
                         <button
@@ -160,7 +164,7 @@ export default function SkillsIcons() {
                         <button
                           type="button"
                           className="cursor-pointer px-4 py-1 mx-1 rounded-md font-semibold text-white bg-red-600 hover:bg-red-700 transition-all"
-                          onClick={() => deleteIcon(icon)}
+                          onClick={() => deleteIcon(index)}
                         >
                           Delete
                         </button>

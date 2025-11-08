@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 import Home from "@/models/Home";
 import connectDB from "@/lib/mongodb";
+import { uploadFile } from "@/lib/cloudinary";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req) {
   await connectDB();
@@ -15,38 +16,15 @@ export async function POST(req) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    // convert file to buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // create unique file name
-    const uniqueName = `${Date.now()}-${file.name}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "images");
-
-    // ensure upload directory exists
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    // save file to disk
-    const filePath = path.join(uploadDir, uniqueName);
-    fs.writeFileSync(filePath, buffer);
-
-    const EmailIconPath = `/uploads/images/${uniqueName}`;
-
-    // check and delete old logo safely
+    const buffer = Buffer.from(await file.arrayBuffer());
     const oldData = await Home.findOne();
-    if (oldData?.EmailIcon && oldData.EmailIcon.startsWith("/uploads/")) {
-      const oldPath = path.join(process.cwd(), "public", oldData.EmailIcon);
-      if (fs.existsSync(oldPath)) {
-        fs.unlinkSync(oldPath);
-      }
-    }
+    const oldPublicId = oldData?.EmailIconPublicId || null;
 
-    // update database
+    const { url, publicId } = await uploadFile(buffer, "email-icons", oldPublicId);
+
     const homeData = await Home.findOneAndUpdate(
       {},
-      { EmailIcon: EmailIconPath },
+      { EmailIcon: url, EmailIconPublicId: publicId },
       { new: true, upsert: true }
     );
 

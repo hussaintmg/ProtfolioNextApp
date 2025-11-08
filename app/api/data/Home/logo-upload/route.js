@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
+import Home from "@/models/Home";
 import connectDB from "@/lib/mongodb";
-import Projects from "@/models/Projects";
-import fs from "fs";
-import path from "path";
+import { uploadFile } from "@/lib/cloudinary";
 
 export const dynamic = "force-dynamic";
 
@@ -11,67 +10,31 @@ export async function POST(req) {
 
   try {
     const formData = await req.formData();
-    const title = formData.get("title");
-    const link = formData.get("link");
+    const file = formData.get("logo");
 
-    if (!title)
-      return NextResponse.json(
-        { message: "Title is required" },
-        { status: 400 }
-      );
-    if (!link)
-      return NextResponse.json(
-        { message: "Link is required" },
-        { status: 400 }
-      );
-
-    const imgDir = path.join(process.cwd(), "public", "uploads", "images");
-    const vidDir = path.join(process.cwd(), "public", "uploads", "videos");
-    if (!fs.existsSync(imgDir)) fs.mkdirSync(imgDir, { recursive: true });
-    if (!fs.existsSync(vidDir)) fs.mkdirSync(vidDir, { recursive: true });
-
-    const images = [];
-    const videos = [];
-
-    for (const [key, value] of formData.entries()) {
-      if (value instanceof File) {
-        const buffer = Buffer.from(await value.arrayBuffer());
-        const uniqueName = `${Date.now()}-${value.name}`;
-
-        if (key === "images[]") {
-          const filePath = path.join(imgDir, uniqueName);
-          fs.writeFileSync(filePath, buffer);
-          images.push(`/uploads/images/${uniqueName}`);
-        }
-
-        if (key === "videos[]") {
-          const filePath = path.join(vidDir, uniqueName);
-          fs.writeFileSync(filePath, buffer);
-          videos.push(`/uploads/videos/${uniqueName}`);
-        }
-      }
+    if (!file || !file.name) {
+      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    const existing = await Projects.findOne();
-    const newProject = { title, link, images, videos };
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    if (existing) {
-      existing.projectsArr.push(newProject);
-      await existing.save();
-      return NextResponse.json(
-        { message: "Project added successfully", project: newProject },
-        { status: 201 }
-      );
-    } else {
-      const created = new Projects({ projectsArr: [newProject] });
-      await created.save();
-      return NextResponse.json(
-        { message: "Project uploaded successfully", project: newProject },
-        { status: 201 }
-      );
-    }
+    const oldData = await Home.findOne();
+    const oldPublicId = oldData?.logoPublicId || null;
+
+    const { url, publicId } = await uploadFile(buffer, "logos", oldPublicId);
+
+    const homeData = await Home.findOneAndUpdate(
+      {},
+      { logo: url, logoPublicId: publicId },
+      { new: true, upsert: true }
+    );
+
+    return NextResponse.json({
+      message: "Logo uploaded successfully",
+      logo: homeData.logo,
+    });
   } catch (err) {
-    console.error("Upload error:", err);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    console.error("Logo upload error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

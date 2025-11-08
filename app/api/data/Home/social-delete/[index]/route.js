@@ -1,24 +1,14 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/lib/mongodb";
 import Home from "@/models/Home";
-import fs from "fs";
-import path from "path";
+import connectDB from "@/lib/mongodb";
+import { cloudinary } from "@/lib/cloudinary";
 
-function deleteFileIfExists(filePath) {
-  try {
-    const absolutePath = path.join(process.cwd(), "public", filePath);
-    if (fs.existsSync(absolutePath)) fs.unlinkSync(absolutePath);
-  } catch (err) {
-    console.error("File delete error:", err);
-  }
-}
+export const dynamic = "force-dynamic";
 
 export async function DELETE(req, { params }) {
   await connectDB();
   try {
-    const { index } = params;
-    const idx = parseInt(index);
-
+    const idx = parseInt(params.index);
     const home = await Home.findOne();
     if (!home) {
       return NextResponse.json({ error: "Home not found" }, { status: 404 });
@@ -28,13 +18,26 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Invalid index" }, { status: 400 });
     }
 
-    const iconPath = home.socials[idx]?.icon;
-    if (iconPath) deleteFileIfExists(iconPath);
+    const socialItem = home.socials[idx];
+
+    if (socialItem.iconPublicId) {
+      try {
+        await cloudinary.uploader.destroy(socialItem.iconPublicId);
+      } catch (err) {
+        console.warn("Failed to delete from Cloudinary:", err.message);
+      }
+    }
 
     home.socials.splice(idx, 1);
     await home.save();
 
-    return NextResponse.json({ socials: home.socials }, { status: 200 });
+    return NextResponse.json(
+      {
+        message: "Social deleted successfully",
+        socials: home.socials,
+      },
+      { status: 200 }
+    );
   } catch (err) {
     console.error("Delete error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });

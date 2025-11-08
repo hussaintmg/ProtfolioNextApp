@@ -6,11 +6,8 @@ export const dynamic = "force-dynamic";
 
 export async function PUT(req, context) {
   await connectDB();
-
   try {
-    const params = await context.params;
-    const id = params?.id;
-
+    const id = parseInt(params.id);
     const body = await req.json();
     const { link } = body;
 
