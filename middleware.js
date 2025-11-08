@@ -1,15 +1,11 @@
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
 export async function middleware(req) {
   const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
 
-  const authRoutes = [
-    "/login",
-    "/register",
-    "/forgot-password",
-    "/reset-password",
-  ];
+  const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
 
   if (token && authRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/", req.url));
@@ -21,21 +17,11 @@ export async function middleware(req) {
     }
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
-      const res = await fetch(`${baseUrl}/api/auth/user`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || data?.user?.role !== "admin") {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (decoded.role !== "admin") {
         return NextResponse.redirect(new URL("/", req.url));
       }
-    } catch (err) {
+    } catch {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
