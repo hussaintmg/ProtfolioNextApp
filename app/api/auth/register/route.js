@@ -69,7 +69,7 @@ export async function POST(req) {
     );
 
     response.cookies.set("token", token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       path: "/",
       maxAge: remember ? 60 * 60 * 24 * 7 : 60 * 60,
