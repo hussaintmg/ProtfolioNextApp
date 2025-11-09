@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 export async function DELETE(req, { params }) {
   await connectDB();
   try {
-    const projectId = parseInt(params.projectId);
+    const projectId = params.projectId;
     const imgIndex = parseInt(params.index);
 
     if (isNaN(imgIndex)) {
