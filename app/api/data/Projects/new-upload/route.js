@@ -29,9 +29,9 @@ export async function POST(req) {
 
     for (const [key, value] of formData.entries()) {
       if (value instanceof File) {
-        const buffer = Buffer.from(await value.arrayBuffer());
-
         if (key === "images[]") {
+          // Convert image to buffer
+          const buffer = Buffer.from(await value.arrayBuffer());
           const result = await uploadFile(
             buffer,
             "projects/images",
@@ -45,8 +45,9 @@ export async function POST(req) {
         }
 
         if (key === "videos[]") {
+          // Use stream for videos
           const result = await uploadFile(
-            buffer,
+            value.stream(),
             "projects/videos",
             null,
             "video"
@@ -69,7 +70,6 @@ export async function POST(req) {
       projectDoc = await Projects.create({ projectsArr: [newProject] });
     }
 
-    // Assign the projectId to each media item after the document is saved
     const lastProject =
       projectDoc.projectsArr[projectDoc.projectsArr.length - 1];
     lastProject.images.forEach((img) => (img.iconProjectId = lastProject._id));
