@@ -26,20 +26,19 @@ export default function AdminProject() {
           {projects?.projects?.projectsArr.map((project) => {
             return <DropdownSection key={project.link} project={project} />;
           })}
-          <p
-            style={{
-              textAlign: "center",
-              color: "red",
-              fontSize: "2rem",
-              fontWeight: "700",
-              display:
-                Array.isArray(projects) && projects.length > 0
-                  ? "none"
-                  : "block",
-            }}
-          >
-            No Projects Available
-          </p>
+          {Array.isArray(projects?.projects?.projectArr) &&
+          projects.projects.projectArr.length === 0 ? (
+            <p
+              style={{
+                textAlign: "center",
+                color: "red",
+                fontSize: "2rem",
+                fontWeight: "700",
+              }}
+            >
+              No Projects Available
+            </p>
+          ) : null}
         </RevealSection>
         <RevealSection trigger="load">
           <NewProject />

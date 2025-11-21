@@ -54,10 +54,8 @@ export async function POST(req) {
     const project = parentDoc.projectsArr[projectIndex];
     const oldVideoObj = project.videos[index];
 
-    // Upload the new video
-    const buffer = Buffer.from(await video.arrayBuffer());
     const result = await uploadFile(
-      buffer,
+      video.stream(),
       "projects/videos",
       oldVideoObj?.public_id || null,
       "video"

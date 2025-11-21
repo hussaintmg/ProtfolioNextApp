@@ -77,26 +77,26 @@ export default function SkillsList() {
 
   return (
     <div className="w-full">
-      {" "}
+      
       <RevealSection trigger="load">
         {skills?.skills?.skList.length > 0 ? (
           <table className="w-[90%] text-center my-[1cm] mx-auto bg-white text-[1.2rem] border-collapse border border-gray-400">
-            {" "}
+            
             <thead>
-              {" "}
+              
               <tr className="bg-[#07628dff] text-[1.3rem] text-white">
-                {" "}
+                
                 <th className="w-[40%] py-[0.3cm] border border-black">
-                  Heading{" "}
-                </th>{" "}
+                  Heading
+                </th>
                 <th className="w-[40%] py-[0.3cm] border border-black">
-                  Additional{" "}
-                </th>{" "}
+                  Additional
+                </th>
                 <th className="w-[20%] py-[0.3cm] border border-black">
-                  Actions{" "}
-                </th>{" "}
-              </tr>{" "}
-            </thead>{" "}
+                  Actions
+                </th>
+              </tr>
+            </thead>
             <tbody>
               {skills?.skills?.skList.map((list, index) => (
                 <tr
@@ -107,7 +107,7 @@ export default function SkillsList() {
                 >
                   {editIndex === index ? (
                     <>
-                      {" "}
+                      
                       <td className="border border-black p-2">
                         <input
                           type="text"
@@ -115,8 +115,8 @@ export default function SkillsList() {
                           onChange={(e) => setEditHeading(e.target.value)}
                           placeholder={list.heading}
                           className="border border-gray-400 rounded-md px-2 py-1 w-[90%] text-[1.2rem] font-semibold"
-                        />{" "}
-                      </td>{" "}
+                        />
+                      </td>
                       <td className="border border-black p-2">
                         <textarea
                           value={editList}
@@ -124,8 +124,8 @@ export default function SkillsList() {
                           placeholder={list.list}
                           className="border border-gray-400 rounded-md px-2 py-1 w-[90%] text-[1.1rem]"
                           rows={2}
-                        />{" "}
-                      </td>{" "}
+                        />
+                      </td>
                       <td className="border border-black p-2 align-middle text-center">
                         <div className="flex justify-center items-center gap-3 w-full h-full">
                           <button
@@ -145,11 +145,11 @@ export default function SkillsList() {
                     </>
                   ) : (
                     <>
-                      {" "}
+                      
                       <td className="border border-black p-2 font-bold text-[1.4rem]">
-                        {list.heading}{" "}
-                      </td>{" "}
-                      <td className="border border-black p-2">{list.list}</td>{" "}
+                        {list.heading}
+                      </td>
+                      <td className="border border-black p-2">{list.list}</td>
                       <td className="border border-black p-2">
                         <button
                           type="button"
@@ -160,25 +160,25 @@ export default function SkillsList() {
                             setEditList(list.list);
                           }}
                         >
-                          Edit{" "}
+                          Edit
                         </button>
                         <button
                           type="button"
                           className="cursor-pointer px-4 py-1 mx-1 rounded-md font-semibold text-white bg-red-600 hover:bg-red-700 transition-all"
                           onClick={() => deleteList(index)}
                         >
-                          Delete{" "}
-                        </button>{" "}
+                          Delete
+                        </button>
                       </td>
                     </>
-                  )}{" "}
+                  )}
                 </tr>
-              ))}{" "}
-            </tbody>{" "}
+              ))}
+            </tbody>
           </table>
         ) : (
           <p className="text-center text-red-600 text-[1.5rem] font-bold mt-[1cm]">
-            No Item Available{" "}
+            No Item Available
           </p>
         )}
 

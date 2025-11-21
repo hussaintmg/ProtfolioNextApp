@@ -21,12 +21,11 @@ export async function middleware(req) {
     }
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${req.headers.get("host")}`;
       const res = await fetch(`${baseUrl}/api/auth/user`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Cookie: `token=${token}`,
         },
       });
 

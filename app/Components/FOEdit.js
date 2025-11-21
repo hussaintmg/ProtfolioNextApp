@@ -78,125 +78,117 @@ export default function FOEdit() {
   };
 
   return (
-    <div className="w-[90%] mx-auto my-[1cm]">
-      {" "}
-      <h2 className="text-center text-[cornflowerblue] my-[0.5cm] text-3xl font-bold">
-        Freelance On{" "}
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h2 className="text-center text-cornflowerblue text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+        Freelance On
       </h2>
+
+      {/* Table Section */}
       {home?.home?.FO && home?.home?.FO.length > 0 ? (
-        <table className="w-[90%] text-center my-[1cm] mx-auto bg-white text-[1.2rem] border-collapse border border-gray-400">
-          {" "}
-          <thead>
-            {" "}
-            <tr className="bg-[#07628dff] text-[1.3rem] text-white">
-              {" "}
-              <th className="w-[33%] py-[0.3cm] border border-black">
-                Title
-              </th>{" "}
-              <th className="w-[33%] py-[0.3cm] border border-black">Link</th>{" "}
-              <th className="w-[33%] py-[0.3cm] border border-black">
-                Actions
-              </th>{" "}
-            </tr>{" "}
-          </thead>{" "}
-          <tbody>
-            {home?.home?.FO.map((item, index) => (
-              <tr
-                key={index}
-                className={`text-black ${
-                  index % 2 === 0 ? "bg-[#e8f4fd]" : "bg-white"
-                } hover:bg-[#d4ecff] transition-all`}
-              >
-                {editIndex === index ? (
-                  <>
-                    {" "}
-                    <td className="border border-black p-2">
-                      <input
-                        type="text"
-                        value={editFOI}
-                        onChange={(e) => setEditFOI(e.target.value)}
-                        placeholder="Title"
-                        className="w-[90%] border rounded-md px-3 py-1 text-[1.2rem]"
-                      />{" "}
-                    </td>{" "}
-                    <td className="border border-black p-2">
-                      <input
-                        type="text"
-                        value={editFOL}
-                        onChange={(e) => setEditFOL(e.target.value)}
-                        placeholder="Link"
-                        className="w-[90%] border rounded-md px-3 py-1 text-[1.2rem]"
-                      />{" "}
-                    </td>{" "}
-                    <td className="border border-black p-2">
-                      <button
-                        onClick={() => handleDone(index)}
-                        className="cursor-pointer px-4 py-1 mx-1 rounded-md text-white font-semibold bg-green-600 hover:bg-green-700"
-                      >
-                        Done{" "}
-                      </button>{" "}
-                      <button
-                        onClick={handleCancel}
-                        className="cursor-pointer px-4 py-1 mx-1 rounded-md text-white font-semibold bg-orange-500 hover:bg-orange-600"
-                      >
-                        Cancel{" "}
-                      </button>{" "}
-                    </td>
-                  </>
-                ) : (
-                  <>
-                    {" "}
-                    <td className="border border-black p-2 font-semibold text-[1.2rem]">
-                      {item.FOI}{" "}
-                    </td>{" "}
-                    <td className="border border-black p-2 font-semibold text-[1.2rem]">
-                      {item.FOL}{" "}
-                    </td>{" "}
-                    <td className="border border-black p-2">
-                      <button
-                        className="cursor-pointer px-4 py-1 mx-1 rounded-md font-semibold bg-yellow-400 hover:bg-yellow-500"
-                        onClick={() => handleEdit(index)}
-                      >
-                        Edit{" "}
-                      </button>
-                      <button
-                        className="cursor-pointer px-4 py-1 mx-1 rounded-md font-semibold bg-red-600 text-white hover:bg-red-700"
-                        onClick={() => handleDelete(index)}
-                      >
-                        Delete{" "}
-                      </button>{" "}
-                    </td>
-                  </>
-                )}{" "}
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-center bg-white border-collapse border border-gray-300">
+            <thead>
+              <tr className="bg-[#07628dff] text-white text-sm sm:text-base md:text-lg">
+                <th className="px-2 sm:px-4 py-2 border border-black">Title</th>
+                <th className="px-2 sm:px-4 py-2 border border-black">Link</th>
+                <th className="px-2 sm:px-4 py-2 border border-black">Actions</th>
               </tr>
-            ))}{" "}
-          </tbody>{" "}
-        </table>
+            </thead>
+            <tbody>
+              {home?.home?.FO.map((item, index) => (
+                <tr
+                  key={index}
+                  className={`text-black text-sm sm:text-base md:text-lg ${
+                    index % 2 === 0 ? "bg-[#e8f4fd]" : "bg-white"
+                  } hover:bg-[#d4ecff] transition-all`}
+                >
+                  {editIndex === index ? (
+                    <>
+                      <td className="border border-black p-2">
+                        <input
+                          type="text"
+                          value={editFOI}
+                          onChange={(e) => setEditFOI(e.target.value)}
+                          placeholder="Title"
+                          className="w-full border rounded-md px-2 py-1 text-sm sm:text-base"
+                        />
+                      </td>
+                      <td className="border border-black p-2">
+                        <input
+                          type="text"
+                          value={editFOL}
+                          onChange={(e) => setEditFOL(e.target.value)}
+                          placeholder="Link"
+                          className="w-full border rounded-md px-2 py-1 text-sm sm:text-base"
+                        />
+                      </td>
+                      <td className="border border-black p-2 flex flex-col sm:flex-row justify-center items-center gap-2">
+                        <button
+                          onClick={() => handleDone(index)}
+                          className="px-3 sm:px-4 py-1 rounded-md text-white font-semibold bg-green-600 hover:bg-green-700"
+                        >
+                          Done
+                        </button>
+                        <button
+                          onClick={handleCancel}
+                          className="px-3 sm:px-4 py-1 rounded-md text-white font-semibold bg-orange-500 hover:bg-orange-600"
+                        >
+                          Cancel
+                        </button>
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td className="border border-black p-2 font-semibold">{item.FOI}</td>
+                      <td className="border border-black p-2 font-semibold">{item.FOL}</td>
+                      <td className="border border-black p-2 flex flex-col sm:flex-row justify-center items-center gap-2">
+                        <button
+                          className="px-3 sm:px-4 py-1 rounded-md font-semibold bg-yellow-400 hover:bg-yellow-500"
+                          onClick={() => handleEdit(index)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="px-3 sm:px-4 py-1 rounded-md font-semibold bg-red-600 text-white hover:bg-red-700"
+                          onClick={() => handleDelete(index)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
-        <p className="text-center text-red-600 text-[1.5rem] font-bold">
-          No Freelance Links Available{" "}
+        <p className="text-center text-red-600 text-lg sm:text-xl font-bold">
+          No Freelance Links Available
         </p>
       )}
-      <div className="flex justify-center items-start gap-10 mt-10">
-        <div className="flex flex-col w-[50%]">
+
+      {/* Upload New Item */}
+      <div className="flex flex-col sm:flex-row justify-center items-start gap-4 sm:gap-6 mt-8">
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-3/4">
           <input
             type="text"
             value={FOI}
             onChange={(e) => setFOI(e.target.value)}
             placeholder="Title"
-            className="border rounded-md px-4 py-2 mb-3 text-[1.2rem]"
+            className="border rounded-md px-3 py-2 text-sm sm:text-base w-full"
           />
           <input
             type="text"
             value={FOL}
             onChange={(e) => setFOL(e.target.value)}
             placeholder="Link"
-            className="border rounded-md px-4 py-2 text-[1.2rem]"
+            className="border rounded-md px-3 py-2 text-sm sm:text-base w-full"
           />
         </div>
         <button
           onClick={uploadNew}
-          className="text-white ml-[5%] border border-[#00f2ea] px-6 py-2 rounded-md hover:bg-[#00f2ea] hover:text-black transition-all duration-300 ease-in-out cursor-pointer"
+          className="text-white border border-[#00f2ea] px-4 sm:px-6 py-2 rounded-md hover:bg-[#00f2ea] hover:text-black transition-all duration-300 ease-in-out w-full sm:w-auto"
         >
           Upload Item
         </button>

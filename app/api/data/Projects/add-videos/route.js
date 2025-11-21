@@ -44,11 +44,10 @@ export async function POST(req) {
 
     for (const file of files) {
       if (file instanceof File && file.size > 0) {
-        const buffer = Buffer.from(await file.arrayBuffer());
 
         // Upload to Cloudinary as video
         const result = await uploadFile(
-          buffer,
+          file.stream(),
           "projects/videos",
           null,
           "video" // specify resource type

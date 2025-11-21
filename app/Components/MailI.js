@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-
 import { useMainData } from "@/app/context/MainDataContext";
-
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -14,7 +12,7 @@ export default function MailEditI() {
 
   const uploadEmailIcon = async () => {
     if (!selectedEmailIconFile)
-      return toast.error("Please select a Icon first!");
+      return toast.error("Please select an Icon first!");
 
     const formData = new FormData();
     formData.append("EMI", selectedEmailIconFile);
@@ -34,12 +32,17 @@ export default function MailEditI() {
   };
 
   return (
-    <div>
-      <div className="w-full flex justify-center items-center gap-[5cm] mt-[0.8cm]">
+    <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h2 className="text-center text-cornflowerblue text-2xl sm:text-3xl font-bold mb-6">
+        Email Icon
+      </h2>
+
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
+        {/* Hidden File Input */}
         <input
           type="file"
           id="EmailIconI"
-          style={{ display: "none" }}
+          className="hidden"
           onChange={(e) => {
             const file = e.target.files[0];
             if (file) {
@@ -48,43 +51,46 @@ export default function MailEditI() {
             }
           }}
         />
+
+        {/* Upload Button / Preview */}
         <button
           type="button"
-          className="cursor-pointer opacity-100 hover:opacity-80 bg-white"
-          onClick={() => {
-            document.getElementById("EmailIconI").click();
-          }}
+          className="flex justify-center items-center bg-white cursor-pointer p-4 rounded-md shadow hover:opacity-80 transition-all"
+          onClick={() => document.getElementById("EmailIconI").click()}
         >
           {selectedEmailIcon ? (
             <img
               src={selectedEmailIcon}
-              alt="Logo Preview"
-              className="logo-preview"
+              alt="Icon Preview"
+              className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-md"
             />
           ) : (
-            <i
-              className="fa-solid fa-upload text-[3cm] flex justify-center items-center m-[20px]"
-              style={{ color: "#000000ff" }}
-            ></i>
+            <i className="fa-solid fa-upload text-6xl sm:text-7xl text-gray-800"></i>
           )}
         </button>
-        <img
-          src={home?.home?.EmailIcon}
-          alt="currentLogo"
-          style={{ background: "rgba(255, 255, 255, 0.4)" }}
-        />
+
+        {/* Current Icon */}
+        {home?.home?.EmailIcon && (
+          <img
+            src={home.home.EmailIcon}
+            alt="Current Icon"
+            className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-md bg-white/40"
+          />
+        )}
       </div>
-      {selectedEmailIcon ? (
-        <button
-          type="button"
-          className="text-white border border-[#00f2ea] px-6 py-2 rounded-md hover:bg-[#00f2ea] hover:text-black transition-all duration-300 ease-in-out cursor-pointer text-lg mt-[1cm] ml-[40%] opacity-100 active:scale-[0.999]"
-          onClick={uploadEmailIcon}
-        >
-          Confirm Changes
-        </button>
-      ) : (
-        <></>
-      )}{" "}
+
+      {/* Confirm Button */}
+      {selectedEmailIcon && (
+        <div className="flex justify-center mt-6">
+          <button
+            type="button"
+            onClick={uploadEmailIcon}
+            className="text-white border border-[#00f2ea] px-6 py-2 rounded-md hover:bg-[#00f2ea] hover:text-black transition-all duration-300 ease-in-out text-lg"
+          >
+            Confirm Changes
+          </button>
+        </div>
+      )}
     </div>
   );
 }

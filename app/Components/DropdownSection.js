@@ -51,14 +51,14 @@ export default function DropdownSection({ project }) {
             <LinkEdit link={project.link} id={project._id} />
           </div>
           <div className="mb-[1.5rem]">
-            <ImagesEdit images={project.images} id={project._id}/>
+            <ImagesEdit images={project.images} id={project._id} />
           </div>
           <div className="mb-[1.5rem]">
             <VideosEdit videos={project.videos} id={project._id} />
           </div>
           <button
             type="button"
-            className="bg-red-500 py-[0.2cm] rounded-md text-2xl font-bold cursor-pointer w-2/5 mx-[30%] text-white hover:bg-red-700"
+            className="bg-red-500 py-[0.2cm] rounded-md  sm:text-2xl font-bold cursor-pointer w-2/5 mx-[30%] text-white hover:bg-red-700"
             onClick={() => delProject(project._id)}
           >
             Delete Project

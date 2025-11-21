@@ -146,13 +146,16 @@ export default function SkillsIcons() {
                     </>
                   ) : (
                     <>
-                      <td className="border border-black p-2 flex justify-center items-center">
-                        <img
-                          src={icon.url}
-                          alt="Skill Icon"
-                          className="w-[15%]"
-                        />
+                      <td className="border border-black p-2">
+                        <div className="w-full h-full flex justify-center items-center">
+                          <img
+                            src={icon.url}
+                            alt="Skill Icon"
+                            className="max-w-full max-h-[70px] sm:max-h-[100px] object-contain"
+                          />
+                        </div>
                       </td>
+
                       <td className="border border-black p-2">
                         <button
                           type="button"

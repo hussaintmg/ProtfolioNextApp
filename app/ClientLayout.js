@@ -80,9 +80,12 @@ export default function ClientLayout({ children }) {
       <Background />
 
       {showLoginBar && (
-        <div className="w-full flex justify-between items-center px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-bold z-[2] sticky top-0 left-0">
-          <span>Do you want to Login / Register?</span>
-          <span className="flex items-center gap-[0.3cm]">
+        <div className="w-full flex flex-col sm:flex-row justify-between items-center px-4 py-2 bg-[#326ae4] text-white font-bold z-[2] sticky top-0 left-0 gap-2 sm:gap-0">
+          <span className="text-center sm:text-left">
+            Do you want to Login / Register?
+          </span>
+
+          <span className="flex items-center gap-3">
             <Link
               href="/login"
               className="text-white bg-green-600 px-3 py-1 rounded"
@@ -105,13 +108,15 @@ export default function ClientLayout({ children }) {
           </span>
         </div>
       )}
+
       {user?.user?.role === "admin" &&
         !user?.user?.authenticated &&
         !isCloseAuthenticate &&
         pathname === "/" && (
-          <div className="w-full flex justify-between items-center px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-semibold z-[2] sticky top-0 left-0">
-            <span>Verify Your Email</span>
-            <span className="flex items-center gap-[0.3cm]">
+          <div className="w-full flex flex-col sm:flex-row justify-between items-center px-4 py-2 bg-[#326ae4] text-white font-semibold z-[2] sticky top-0 left-0 gap-2 sm:gap-0">
+            <span className="text-center sm:text-left">Verify Your Email</span>
+
+            <span className="flex items-center gap-3">
               <button
                 onClick={sendAuthLink}
                 className="text-white cursor-pointer bg-green-600 px-3 py-1 rounded"
@@ -133,12 +138,12 @@ export default function ClientLayout({ children }) {
         user?.user?.authenticated &&
         !isCloseAdmin &&
         pathname === "/" && (
-          <div className="w-full flex justify-between items-center px-[0.7cm] py-[0.3cm] bg-[#326ae4] text-white font-semibold z-[2] sticky top-0 left-0">
-            <span>
+          <div className="w-full flex flex-col sm:flex-row justify-between items-center px-4 py-2 bg-[#326ae4] text-white font-semibold z-[2] sticky top-0 left-0 gap-2 sm:gap-0">
+            <span className="text-center sm:text-left">
               Hey Admin! Want to go to the Admin Page?
-              {user?.user?.authenticated}
             </span>
-            <span className="flex items-center gap-[0.3cm]">
+
+            <span className="flex items-center gap-3">
               <Link
                 href="/admin"
                 className="text-white bg-green-600 px-3 py-1 rounded"

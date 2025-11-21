@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-
 import { useMainData } from "@/app/context/MainDataContext";
-
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -21,15 +19,16 @@ export default function MailT({ activeTab3 }) {
         { headers: { "Content-Type": "application/json" } }
       );
       getData();
-      setEmailT("")
-      toast.success(res.data.message || "Email update successfully!");
+      setEmailT("");
+      toast.success(res.data.message || "Email updated successfully!");
     } catch (error) {
       console.error("Upload Error:", error);
       toast.error("Failed to update");
     }
   };
+
   return (
-    <div className="m-[20px]">
+    <div className="w-full max-w-md mx-auto p-4 sm:p-6">
       <input
         type="text"
         name="UPEmail"
@@ -37,12 +36,11 @@ export default function MailT({ activeTab3 }) {
         placeholder={home?.home?.EmailT}
         value={EmailT}
         onChange={(e) => setEmailT(e.target.value)}
-        className="w-[50%] h-[1cm] text-[30px] border rounded-sm px-[10px]"
+        className="w-full sm:w-full h-12 sm:h-14 text-lg sm:text-xl border rounded-md px-4 mb-4 focus:outline-none focus:ring-2 focus:ring-[#00f2ea] focus:border-transparent"
       />
       <button
         type="button"
-        className="text-white border border-[#00f2ea] px-6 py-2 rounded-md hover:bg-[#00f2ea] hover:text-black transition-all duration-300 ease-in-out cursor-pointer text-lg mt-[1cm] ml-[40%] opacity-100 active:scale-[0.999]"
-        style={{ margin: " 0 0 0 10%" }}
+        className="w-full sm:w-auto block mx-auto text-white border border-[#00f2ea] px-6 py-2 rounded-md hover:bg-[#00f2ea] hover:text-black transition-all duration-300 ease-in-out text-lg"
         onClick={updateEmail}
       >
         Update Email
